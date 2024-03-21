@@ -1,0 +1,10 @@
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px
+}
+
+ion-toolbar {
+    --padding-top: 15px;
+    --padding-bottom: 15px;
+  }
