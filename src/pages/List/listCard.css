@@ -1,0 +1,65 @@
+.card-container {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+  margin: 20px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.actions-container {
+  display: flex;
+  gap: 15px;
+}
+
+.info-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.description {
+  font-size: small;
+}
+
+.cancel-popover {
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+}
+
+ion-action-sheet.action-sheet {
+  --button-color: #000000;
+}
+ion-modal#add-list-modal {
+  --width: fit-content;
+  --min-width: 250px;
+  --height: fit-content;
+  --border-radius: 6px;
+  --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
+}
+
+ion-modal#delete-list-modal {
+  --width: fit-content;
+  --min-width: 250px;
+  --height: fit-content;
+  --border-radius: 6px;
+  --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
+}
+
+.modal-props {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+}
+
+.modal-buttons-container {
+  display: flex;
+  justify-content: end;
+  gap: 20px;
+  color: #000000;
+  font-weight: 600;
+  font-size: small;
+}

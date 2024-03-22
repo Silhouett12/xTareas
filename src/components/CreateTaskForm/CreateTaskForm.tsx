@@ -35,6 +35,7 @@ type Task = {
   period: string;
   expireDate: Date;
   completed: boolean;
+  list: string;
 };
 
 const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
@@ -46,6 +47,7 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
     id: "",
     title: "",
     period: "",
+    list: "Default",
     expireDate: new Date(),
     completed: false,
   });
@@ -67,6 +69,7 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
         id: generateRandomId(),
         title: "",
         period: "",
+        list: "Default",
         completed: false,
         expireDate: new Date(),
       });
@@ -85,13 +88,13 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
       id: generateRandomId(),
       title: "",
       period: "",
+      list: "Default",
       completed: false,
       expireDate: new Date(),
     });
   };
 
   console.log(task);
-  
 
   return (
     <IonModal isOpen={openTaskModal} onDidDismiss={onClose}>

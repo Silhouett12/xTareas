@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { IonContent, IonPage, IonTitle } from "@ionic/react";
-import AppBar from "../components/AppBar/AppBar";
-import CreateTaskButton from "../components/CreateTaskbutton/CreateTaskButton";
-import CreateTaskForm from "../components/CreateTaskForm/CreateTaskForm";
-import TaskCard from "../components/TaskCard/TaskCard";
-import { useTaskContext } from "../contexts/TaskContexts";
+import AppBar from "../../components/AppBar/AppBar";
+import CreateTaskButton from "../../components/CreateTaskbutton/CreateTaskButton";
+import CreateTaskForm from "../../components/CreateTaskForm/CreateTaskForm";
+import TaskCard from "../../components/TaskCard/TaskCard";
+import { useTaskContext } from "../../contexts/TaskContexts";
 import "./Home.css";
 
 interface CategorizedTasks {

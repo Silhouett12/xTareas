@@ -6,6 +6,7 @@ import React, {
   useState,
 } from "react";
 import { Storage } from "@ionic/storage";
+import { list } from "ionicons/icons";
 
 // Define types
 type Task = {
@@ -14,10 +15,19 @@ type Task = {
   period: string;
   expireDate: Date;
   completed: boolean;
+  list: string;
+};
+type List = {
+  id: string;
+  name: string;
 };
 
 type TaskContextType = {
+  lists: List[];
+  deleteList: (index: string) => void;
   tasks: Task[];
+  addList: (newList: List) => void;
+  editList: (newList: List) => void;
   addTask: (task: Task) => void;
   removeTask: (index: string) => void;
   toggleTaskCompletion: (index: string) => void;
@@ -34,11 +44,10 @@ const TaskContext = createContext<TaskContextType | undefined>(undefined);
 export const TaskProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
+  const [lists, setLists] = useState<any[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [addTaskModal, setAddTaskModal] = useState(false);
   const [store, setStore] = useState<Storage>();
-
-  console.log(tasks);
 
   const checkTaskPeriod = (task: Task) => {
     // Calculate the new expiration date based on the period
@@ -63,7 +72,6 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({
     }
 
     console.log(newExpireDate);
-    
 
     // Update the expiration date of the task
     const updatedTask = { ...task, expireDate: newExpireDate };
@@ -78,14 +86,6 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({
     } else {
       console.error("Task not found:", task.id);
     }
-  };
-
-  let x = {
-    id: "wgytotwnanc_1710986393785",
-    title: "Test",
-    period: "monthly",
-    completed: false,
-    expireDate: new Date("2024-03-21T01:59:53.000Z"),
   };
 
   const onCloseModal = () => {
@@ -126,17 +126,6 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({
     setTasks(newTasks);
   };
 
-  const value: TaskContextType = {
-    tasks,
-    addTask,
-    removeTask,
-    toggleTaskCompletion,
-    onCloseModal,
-    addTaskModal,
-    checkTaskPeriod,
-    onOpenModal,
-  };
-
   // Load tasks from localStorage on component mount
 
   useEffect(() => {
@@ -149,6 +138,18 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({
 
       const savedTasks = (await store.get("TASKS_KEY")) || [];
       setTasks(savedTasks);
+
+      // Check if the list is empty when the app is opened for the first time
+      const savedList = await store?.get("LIST_KEY");
+      if (!savedList || savedList.length === 0) {
+        // Create a default list if the saved list is empty
+        const defaultList = [{ id: "1", name: "Default List" }];
+        await store?.set("LIST_KEY", defaultList);
+        setLists(defaultList);
+      } else {
+        // Set the existing list if it's not empty
+        setLists(savedList);
+      }
     };
     try {
       initStorage();
@@ -170,6 +171,58 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({
 
     saveTasks();
   }, [tasks]); // Run this effect whenever tasks state changes
+
+  useEffect(() => {
+    const saveLists = async () => {
+      try {
+        await store?.set("LIST_KEY", lists);
+      } catch (error) {
+        console.error("Error saving list to localStorage:", error);
+      }
+    };
+
+    saveLists();
+  }, [lists]); // Run this effect whenever tasks state changes
+
+  //////// LIST LOGIC ////////
+
+  const deleteList = (id: string) => {
+    const newList = lists.filter((item) => item.id !== id);
+    console.log(newList);
+    setLists(newList);
+  };
+
+  const addList = (newList: List) => {
+    setLists([...lists, newList]);
+  };
+
+  const editList = (newList: List) => {
+
+    console.log(newList);
+    
+
+    const updatedList = lists.map((item) =>
+      item.id === newList.id ? { ...item, name: newList.name } : item
+    );
+    console.log(updatedList);
+    
+    setLists(updatedList);
+  };
+
+  const value: TaskContextType = {
+    tasks,
+    lists,
+    addList,
+    deleteList,
+    editList,
+    addTask,
+    removeTask,
+    toggleTaskCompletion,
+    onCloseModal,
+    addTaskModal,
+    checkTaskPeriod,
+    onOpenModal,
+  };
 
   return <TaskContext.Provider value={value}>{children}</TaskContext.Provider>;
 };
