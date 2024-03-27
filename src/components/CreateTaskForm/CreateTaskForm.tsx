@@ -20,7 +20,7 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { useTaskContext } from "../../contexts/TaskContexts";
-import { arrowBackOutline, checkmarkOutline } from "ionicons/icons";
+import { arrowBackOutline, checkmarkOutline, list } from "ionicons/icons";
 import "./createTaskForm.css";
 
 interface CreateTaskFormProps {
@@ -52,7 +52,7 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
     completed: false,
   });
 
-  const { addTask } = useTaskContext();
+  const { addTask, lists } = useTaskContext();
 
   const generateRandomId = () => {
     const randomString = Math.random().toString(36).substring(2);
@@ -154,7 +154,11 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
           <IonItem>
             <IonSelect placeholder="Seleccionar lista">
               <div slot="label">Añadir a la lista</div>
-              <IonSelectOption value="norepeat">Por defecto</IonSelectOption>
+              {lists.map((list) => (
+                <IonSelectOption key={list.id} value={list.name}>
+                  {list.name}
+                </IonSelectOption>
+              ))}
             </IonSelect>
           </IonItem>
         </div>

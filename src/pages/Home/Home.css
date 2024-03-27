@@ -1,8 +1,14 @@
 .task-container {
-    padding-top: 30px;
+  padding-top: 30px;
 }
 
 .title {
-    font-weight: 600;
-    text-align: start;
+  font-weight: 600;
+  text-align: start;
 }
+
+ion-toolbar {
+  --padding-top: 15px;
+  --padding-bottom: 15px;
+}
+
