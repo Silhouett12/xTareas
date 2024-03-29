@@ -4,7 +4,7 @@ import { add } from "ionicons/icons";
 import "./createTaskButton.css";
 
 interface CreateTaskButtonProps {
-  openTaskModal: () => void;
+  openTaskModal: (edit: string) => void;
 }
 
 const CreateTaskButton: React.FC<CreateTaskButtonProps> = ({
@@ -15,7 +15,7 @@ const CreateTaskButton: React.FC<CreateTaskButtonProps> = ({
       slot="fixed"
       vertical="bottom"
       horizontal="end"
-      onClick={openTaskModal}>
+      onClick={() => openTaskModal("")}>
       <IonFabButton color="dark">
         <IonIcon icon={add}></IonIcon>
       </IonFabButton>

@@ -20,20 +20,26 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { useTaskContext } from "../../contexts/TaskContexts";
-import { arrowBackOutline, checkmarkOutline, list } from "ionicons/icons";
+import {
+  arrowBackOutline,
+  checkmarkOutline,
+  list,
+  trash,
+} from "ionicons/icons";
 import "./createTaskForm.css";
+import dayjs from "dayjs";
 
 interface CreateTaskFormProps {
   openTaskModal: boolean;
   onClose: () => void; // Function to close the modal
-  editTask?: Task; // Optional task to edit
+  editTask?: Task | null; // Optional task to edit
 }
 
 type Task = {
   id: string;
   title: string;
   period: string;
-  expireDate: Date;
+  expireDate: string;
   completed: boolean;
   list: string;
 };
@@ -48,11 +54,13 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
     title: "",
     period: "",
     list: "Default",
-    expireDate: new Date(),
+    expireDate: new Date().toISOString(),
     completed: false,
   });
 
-  const { addTask, lists } = useTaskContext();
+  const [isToastOpen, setIsToastOpen] = useState(false);
+
+  const { addTask, lists, removeTask } = useTaskContext();
 
   const generateRandomId = () => {
     const randomString = Math.random().toString(36).substring(2);
@@ -71,13 +79,13 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
         period: "",
         list: "Default",
         completed: false,
-        expireDate: new Date(),
+        expireDate: new Date().toISOString(),
       });
     }
   }, [editTask]);
 
   const handleDateChange = (e: CustomEvent<any>) => {
-    const newDate = new Date(e.detail.value);
+    const newDate = new Date(e.detail.value).toISOString();
     setTask({ ...task, expireDate: newDate });
   };
 
@@ -90,7 +98,7 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
       period: "",
       list: "Default",
       completed: false,
-      expireDate: new Date(),
+      expireDate: new Date().toISOString(),
     });
   };
 
@@ -102,10 +110,21 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
         <IonToolbar>
           <IonButtons slot="start">
             <IonButton onClick={onClose}>
-              <IonIcon slot="end" icon={arrowBackOutline}></IonIcon>
+              <IonIcon icon={arrowBackOutline}></IonIcon>
             </IonButton>
           </IonButtons>
           <IonTitle>Nueva tarea</IonTitle>
+          {editTask && (
+            <IonButtons slot="end">
+              <IonButton
+                onClick={() => {
+                  removeTask(task.id);
+                  onClose();
+                }}>
+                <IonIcon icon={trash}></IonIcon>
+              </IonButton>
+            </IonButtons>
+          )}
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
@@ -138,9 +157,8 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
           <IonItem>
             <IonSelect
               placeholder="Sin repetición"
-              onIonChange={(e) =>
-                setTask({ ...task, period: e.detail.value! })
-              }>
+              onIonChange={(e) => setTask({ ...task, period: e.detail.value! })}
+              value={task.period ? task.period : ""}>
               <div slot="label">Se repite</div>
               <IonSelectOption value="norepeat">Sin repetición</IonSelectOption>
               <IonSelectOption value="daily">Una vez al día</IonSelectOption>
@@ -152,7 +170,12 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
             </IonSelect>
           </IonItem>
           <IonItem>
-            <IonSelect placeholder="Seleccionar lista">
+            <IonSelect
+              placeholder="Seleccionar lista"
+              onIonChange={(e) => {
+                setTask({ ...task, list: e.detail.value });
+              }}
+              value={task.list ? task.list : "Default"}>
               <div slot="label">Añadir a la lista</div>
               {lists.map((list) => (
                 <IonSelectOption key={list.id} value={list.name}>
@@ -163,17 +186,17 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
           </IonItem>
         </div>
         <IonToast
-          trigger="open-toast"
+          isOpen={isToastOpen}
           position="bottom"
+          onDidDismiss={() => setIsToastOpen(false)}
           message="Complete la tarea primero"
           duration={2000}></IonToast>
         <IonFab
           slot="fixed"
-          id="open-toast"
           vertical="bottom"
           horizontal="end"
           onClick={() => {
-            task.title ? handleClose() : null;
+            task.title ? handleClose() : setIsToastOpen(true);
           }}>
           <IonFabButton color="dark">
             <IonIcon icon={checkmarkOutline}></IonIcon>

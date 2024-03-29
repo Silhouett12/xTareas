@@ -12,7 +12,7 @@ type Task = {
   id: string;
   title: string;
   period: string;
-  expireDate: Date;
+  expireDate: string;
   completed: boolean;
   list: string;
 };
@@ -141,8 +141,6 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({
       console.error("Task expireDate is undefined");
       return;
     }
-    console.log(task);
-    
     let newExpireDate = new Date(task.expireDate);
     switch (task.period) {
       case "daily":
@@ -162,11 +160,8 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({
         console.error("Unsupported period:", task.period);
         return;
     }
-
-    console.log(newExpireDate);
-
     // Update the expiration date of the task
-    const updatedTask = { ...task, expireDate: newExpireDate };
+    const updatedTask = { ...task, expireDate: newExpireDate.toISOString() };
 
     // Find the index of the task in the tasks array
     const taskIndex = tasks.findIndex((t) => t.id === task.id);

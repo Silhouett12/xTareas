@@ -18,13 +18,16 @@ import "./Home.css";
 
 interface Task {
   id: string;
-  expireDate: Date;
-  completed: boolean;
   title: string;
+  period: string;
+  expireDate: string;
+  completed: boolean;
+  list: string;
 }
 
 const Home: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
   const { filteredTasks, lists, selectedList, selectList } = useTaskContext();
 
@@ -33,10 +36,13 @@ const Home: React.FC = () => {
   };
 
   const closeModal = () => {
+    setSelectedTask(null);
     setShowModal(false);
   };
 
-
+  const handleEditModal = (task: Task) => {
+    setSelectedTask(task), setShowModal(true);
+  };
 
   return (
     <IonPage>
@@ -71,8 +77,14 @@ const Home: React.FC = () => {
         </IonHeader>
         <CreateTaskButton openTaskModal={openModal} />
         {showModal && (
-          <CreateTaskForm openTaskModal={showModal} onClose={closeModal} />
+          <CreateTaskForm
+            key={"createTaskModal"}
+            openTaskModal={showModal}
+            onClose={closeModal}
+            editTask={selectedTask ? selectedTask : null}
+          />
         )}
+
         <div className="task-container">
           {Object.entries(filteredTasks)?.map(([category, tasks]) => (
             <div key={category}>
@@ -90,6 +102,7 @@ const Home: React.FC = () => {
                   completed={task.completed}
                   title={task.title}
                   listName={category}
+                  setSelectedTask={handleEditModal}
                 />
               ))}
             </div>
